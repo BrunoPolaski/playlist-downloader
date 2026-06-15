@@ -2,29 +2,25 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 
-	"github.com/brunopolaski/youtube-playlist-downloader/internal/youtube"
+	"github.com/BrunoPolaski/playlist-downloader/internal/youtube"
 )
 
 func main() {
-	playlist := flag.String("playlist", "", "YouTube playlist URL")
-	output := flag.String("output", "./downloads", "Output directory")
+	playlist := flag.String("playlist", "", "playlist url")
+	output := flag.String("output", "./downloads", "output directory")
+	workers := flag.Int("workers", 5, "number of concurrent downloads")
 
 	flag.Parse()
 
 	if *playlist == "" {
-		log.Fatal("playlist URL is required")
+		log.Fatal("playlist is required")
 	}
 
-	downloader := youtube.New(*output)
+	d := youtube.New(*output, *workers)
 
-	fmt.Println("Downloading playlist...")
-
-	if err := downloader.DownloadPlaylist(*playlist); err != nil {
-		log.Fatalf("download failed: %v", err)
+	if err := d.DownloadPlaylist(*playlist); err != nil {
+		log.Fatal(err)
 	}
-
-	fmt.Println("Done.")
 }
